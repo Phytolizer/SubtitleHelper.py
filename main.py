@@ -2,7 +2,7 @@ import speech_recognition as sr
 import pygame as pg
 
 
-def main_loop(screen, source):
+def main_loop(screen: pg.Surface, source: sr.Microphone):
     while True:
         # Go through pygame events
         for event in pg.event.get():
