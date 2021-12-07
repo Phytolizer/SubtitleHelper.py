@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <curl/curl.h>
+#include <iostream>
 #include <type_traits>
 #include <vector>
 
@@ -13,6 +15,27 @@ class Audio
 		size_t oldSize = m_buffer.size();
 		m_buffer.resize(oldSize + length);
 		SDL_memcpy(m_buffer.data() + oldSize, buffer, length);
+	}
+
+	void SubmitBuffer() const
+	{
+		// Submit buffer to Google API
+		// Open connection with libcurl
+		CURL* curl = curl_easy_init();
+		curl_easy_setopt(curl, CURLOPT_URL, "https://speech.googleapis.com/v1p1beta1/speech:recognize");
+		curl_easy_setopt(curl, CURLOPT_POST, 1);
+		// Send audio data
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, m_buffer.data());
+		CURLcode error = curl_easy_perform(curl);
+		if (error != CURLE_OK)
+		{
+			// Error! Report it.
+			std::cout << "Error: " << curl_easy_strerror(error) << std::endl;
+			// Don't go any further.
+			return;
+		}
+		// Clean up
+		curl_easy_cleanup(curl);
 	}
 };
 
@@ -68,6 +91,9 @@ int main()
 				break;
 			}
 		}
+		// Submit audio buffer to Google
+		audio.SubmitBuffer();
+
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderPresent(renderer);

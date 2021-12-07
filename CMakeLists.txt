@@ -11,5 +11,5 @@ project(
 find_package("SDL2" REQUIRED COMPONENTS "ttf")
 
 add_executable("SubtitleHelper" "SubtitleHelper.cpp")
-target_link_libraries("SubtitleHelper" PRIVATE "SDL2" "SDL2_ttf")
+target_link_libraries("SubtitleHelper" PRIVATE "SDL2" "SDL2_ttf" "curl")
 target_compile_features("SubtitleHelper" PUBLIC "cxx_std_20")
