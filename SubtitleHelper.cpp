@@ -50,13 +50,24 @@ int main()
 	    SDL_CreateWindow("Subtitle Helper", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480);
-	SDL_Event event;
-	while (true)
+	bool run = true;
+	while (run)
 	{
-		SDL_PollEvent(&event);
-		if (event.type == SDL_QUIT)
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
 		{
-			break;
+			switch (event.type)
+			{
+			case SDL_QUIT:
+				run = false;
+				break;
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE)
+				{
+					run = false;
+				}
+				break;
+			}
 		}
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, texture, nullptr, nullptr);
